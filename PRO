@@ -1,0 +1,83 @@
+import processing.serial.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+
+Serial Puerto;
+
+String distancia = "";
+String angulo = "";
+String datos = "";
+int indice1 = 0;
+int indice2 = 0;
+int Angulo2, Distancia2;
+float pixeles;
+PImage img;
+
+void setup(){
+  size(1240, 720);
+  smooth(4);
+  Puerto = new Serial(this, "COM3", 9600);
+  Puerto.bufferUntil('~');
+  //img = loadImage("igames.jpg");
+}
+
+void draw(){
+ background(250,0,150);  
+ fill(10, 10, 10);
+ noStroke();
+ radar();
+ linea();
+}
+
+void serialEvent(Serial Puerto){
+  datos = Puerto.readStringUntil('~');
+  datos = datos.substring(0,datos.length()-1);
+  indice1 = datos.indexOf(";");
+  angulo = datos.substring(0, indice1);
+  distancia = datos.substring(indice1+1, datos.length());
+  Angulo2 = int(angulo);
+  Distancia2 = int(distancia);
+  
+}
+
+void radar(){
+   pushMatrix();
+   translate(620, 720);
+   noFill();
+   strokeWeight(4);
+   stroke(0);
+   arc(0, 0, 1200, 1200, PI, TWO_PI);
+   arc(0, 0, 1000, 1000, PI, TWO_PI);
+   arc(0, 0, 800, 800, PI, TWO_PI);
+   arc(0, 0, 600, 600, PI, TWO_PI);
+   line(0, 0, -620*cos(radians(0)), -620*sin(radians(0)));
+   line(0, 0, -620*cos(radians(30)), -620*sin(radians(30)));
+   line(0, 0, -620*cos(radians(60)), -620*sin(radians(60)));
+   line(0, 0, -620*cos(radians(90)), -620*sin(radians(90)));
+   line(0, 0, -620*cos(radians(120)), -620*sin(radians(120)));
+   line(0, 0, -620*cos(radians(150)), -620*sin(radians(150)));
+   line(-620*cos(radians(30)), 0, 620, 0);
+   popMatrix();
+}  
+
+
+void linea(){
+  pushMatrix();
+  strokeWeight(7);
+  stroke(30, 250, 60);
+  translate(620, 720);
+  line(0,0, 610*cos(radians(Angulo2)), -950*sin(radians(Angulo2)));
+  popMatrix();
+}
+
+void objeto(){
+  pushMatrix();
+  translate(620,720);
+  strokeWeight(4);
+  stroke(255,10,10);
+  pixeles = Distancia2*22.5;
+  if(Distancia2 < 40){
+    line(pixeles*cos(radians(Angulo2)),-pixeles*sin(radians(Angulo2)),950*cos(radians(Angulo2)),-950*sin(radians(Angulo2)));
+  }
+  popMatrix();
+}
