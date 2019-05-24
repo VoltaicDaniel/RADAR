@@ -1,0 +1,50 @@
+#include <Servo.h>
+
+const int Trig = 9;
+const int Echo = 10;
+double distancia;
+long tiempo;
+
+
+Servo Motor;
+
+int calcularD(){
+  digitalWrite(Trig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trig, LOW);
+  tiempo = pulseIn(Echo, HIGH);
+  distancia = tiempo*(0.034/2);
+  return distancia;
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  Motor.attach(11);
+  Serial.begin(9600);
+  pinMode(Trig, OUTPUT);
+  pinMode(Echo, INPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  for(int x = 0; x <= 180; x++){
+    Motor.write(x);
+    delay(30);
+    distancia = calcularD();
+    Serial.print(x);
+    Serial.print(";");
+    Serial.print(distancia);
+    Serial.print("~");
+  }
+  for(int x = 180; x >= 0; x--){
+    Motor.write(x);
+    delay(30);
+    distancia = calcularD();
+    Serial.print(x);
+    Serial.print(";");
+    Serial.print(distancia);
+    Serial.print("~");
+  }
+}
